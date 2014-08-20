@@ -1,0 +1,10 @@
+{
+  "description": "test app",
+  "name": "app",
+  "developer": {
+    "name": "Some Dev"
+  },
+  "icons": {
+    "128": "test/icon.png"
+  }
+}
