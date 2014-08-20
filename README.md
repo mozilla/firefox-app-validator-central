@@ -13,7 +13,7 @@ If you are using a custom 'fs' or 'url' module instead of the node one, then you
     var results = validator('/path/to/manifest.webapp', '/path/to/icon.png', false);
     console.log(results);
 
-    // First argument is a path to the manifest file, second is a path to the icon file
+    // First argument is a path to the manifest file, second is a path to the icon file, third argument is whether or not this is a packaged app
 
 ## License
 
