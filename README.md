@@ -10,11 +10,11 @@ If you are using a custom 'fs' or 'url' module instead of the node one, then you
 
     var validator = require('firefox-app-validator-central');
 
-    validator('/path/to/manifest.webapp', false, function (err, results) {
+    validator('/path/to/manifest.webapp', { url: false, packaged: false }, function (err, results) {
       console.log(results);
     });
 
-    // First argument is a path to the manifest file, second argument is whether or not this is a packaged app
+    // First argument is a path to the manifest file, second argument is where you can override node's URL module and/or set a packaged app
 
 ## License
 

@@ -14,15 +14,12 @@ var manifest = new Manifest({
 var ManifestIcon = require('firefox-app-validator-icons');
 var icons = new ManifestIcon();
 
-module.exports = function (manifestPath, packagedApp, next) {
+module.exports = function (manifestPath, options, next) {
   var errors = {};
   var warnings = {};
   var manifestContent = {};
   var manifestResults = {};
   var manifestJSON = {};
-  var options = {
-    packaged: packagedApp || false
-  };
 
   function loadManifest() {
     var deferred = Q.defer();
