@@ -4,6 +4,8 @@ var config = require('./config.json');
 
 var fs = require('./libwrappers/fs')(config.fsLib);
 
+var Q = require('q');
+
 var Manifest = require('firefox-app-validator-manifest');
 var manifest = new Manifest({
     url: config.urlLib
@@ -12,31 +14,61 @@ var manifest = new Manifest({
 var ManifestIcon = require('firefox-app-validator-icons');
 var icons = new ManifestIcon();
 
-module.exports = function (manifestPath, iconPath, packagedApp) {
+module.exports = function (manifestPath, packagedApp, next) {
   var errors = {};
   var warnings = {};
+  var manifestContent = {};
+  var manifestResults = {};
+  var manifestJSON = {};
   var options = {
     packaged: packagedApp || false
   };
 
-  var manifestContent = fs.readFileSync(manifestPath, 'utf8');
-  var manifestResults = manifest.validate(manifestContent, options);
+  function loadManifest() {
+    var deferred = Q.defer();
 
-  errors = manifestResults.errors;
-  warnings = manifestResults.warnings;
+    fs.readFile(manifestPath, 'utf8', function (err, mc) {
+      if (err) {
+        deferred.reject(err);
+      } else {
+        manifestContent = mc;
+        validateManifest();
+        validateIcons();
 
-  var manifestJSON = JSON.parse(manifestContent);
+        deferred.resolve();
+      }
+    });
 
-  for (var i in manifestJSON.icons) {
-    var iconResults = icons.validate(fs.readFileSync(manifestJSON.icons[i]));
+    return deferred.promise;
+  };
 
-    for (var k in iconResults.errors) {
-      errors[k] = iconResults.errors[k];
+  function validateManifest() {
+    manifestResults = manifest.validate(manifestContent, options);
+
+    errors = manifestResults.errors;
+    warnings = manifestResults.warnings;
+
+    manifestJSON = JSON.parse(manifestContent);
+  };
+
+  function validateIcons() {
+    for (var i in manifestJSON.icons) {
+      var iconResults = icons.validate(fs.readFileSync(manifestJSON.icons[i]));
+
+      for (var k in iconResults.errors) {
+        errors[k] = iconResults.errors[k];
+      }
     }
-  }
+  };
 
-  return {
-    errors: errors,
-    warnings: warnings
-  }
+  loadManifest()
+    .then(function () {
+      next(null, {
+        errors: errors,
+        warnings: warnings
+      });
+    })
+    .catch(function (err) {
+      next(err);
+    });
 };
