@@ -1,6 +1,6 @@
 {
   "name": "firefox-app-validator-central",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Main Firefox app validator to verify manifest and icon rules",
   "main": "index.js",
   "dependencies": {
