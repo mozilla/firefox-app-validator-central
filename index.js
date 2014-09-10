@@ -32,8 +32,6 @@ module.exports = function (manifestPath, packagedApp, next) {
         deferred.reject(err);
       } else {
         manifestContent = mc;
-        validateManifest();
-        validateIcons();
 
         deferred.resolve();
       }
@@ -63,6 +61,9 @@ module.exports = function (manifestPath, packagedApp, next) {
 
   loadManifest()
     .then(function () {
+      validateManifest();
+      validateIcons();
+
       next(null, {
         errors: errors,
         warnings: warnings
